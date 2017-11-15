@@ -14,25 +14,28 @@ from .data.objects.examples import (
     precip, sphum, globe, sahel
 )
 
+
 def _test_output_attrs(calc, dtype_out):
-    data = xr.open_dataset(calc.path_out[dtype_out])
-    expected_units = calc.var.units
-    if calc.dtype_out_vert == 'vert_int':
-        if expected_units != '':
-            expected_units = ("(vertical integral of {0}):"
-                              " {0} m)").format(expected_units)
-        else:
-            expected_units = ("(vertical integral of quantity"
-                              " with unspecified units)")
-    expected_description = calc.var.description
-    for name, arr in data.data_vars.items():
-        assert expected_units == arr.attrs['units']
-        assert expected_description == arr.attrs['description']
+    with xr.open_dataset(calc.path_out[dtype_out]) as data:
+        expected_units = calc.var.units
+        if calc.dtype_out_vert == 'vert_int':
+            if expected_units != '':
+                expected_units = ("(vertical integral of {0}):"
+                                  " {0} m)").format(expected_units)
+            else:
+                expected_units = ("(vertical integral of quantity"
+                                  " with unspecified units)")
+        expected_description = calc.var.description
+        for name, arr in data.data_vars.items():
+            assert expected_units == arr.attrs['units']
+            assert expected_description == arr.attrs['description']
+
 
 def _test_files_and_attrs(calc, dtype_out):
     assert isfile(calc.path_out[dtype_out])
     assert isfile(calc.path_tar_out)
     _test_output_attrs(calc, dtype_out)
+
 
 class TestCalcBasic(unittest.TestCase):
     def setUp(self):
