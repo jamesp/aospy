@@ -286,7 +286,7 @@ def numpy_datetime_workaround_encode_cf(ds):
         new_units = units.replace(units_yr, str(new_units_yr))
 
         for VAR_STR in TIME_VAR_STRS:
-            if VAR_STR in ds:
+            if VAR_STR in ds.coords:
                 var = ds[VAR_STR]
                 var.attrs['units'] = new_units
         return ds, min_yr, max_yr
@@ -409,7 +409,7 @@ def ensure_time_avg_has_cf_metadata(ds):
     Dataset or DataArray
         Time average metadata attributes added if needed.
     """  # flake8: noqa
-    if TIME_WEIGHTS_STR not in ds:
+    if TIME_WEIGHTS_STR not in ds.coords:
         time_weights = ds[TIME_BOUNDS_STR].diff(BOUNDS_STR)
         time_weights = time_weights.rename(TIME_WEIGHTS_STR).squeeze()
         ds[TIME_WEIGHTS_STR] = time_weights.drop(BOUNDS_STR)

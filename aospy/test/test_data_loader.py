@@ -81,14 +81,14 @@ class AospyDataLoaderTestCase(unittest.TestCase):
 
 class TestDataLoader(AospyDataLoaderTestCase):
     def test_rename_grid_attrs_ds(self):
-        assert LAT_STR not in self.ds
-        assert self.ALT_LAT_STR in self.ds
+        assert LAT_STR not in self.ds.coords
+        assert self.ALT_LAT_STR in self.ds.coords
         ds = grid_attrs_to_aospy_names(self.ds)
-        assert LAT_STR in ds
+        assert LAT_STR in ds.coords
 
     def test_rename_grid_attrs_dim_no_coord(self):
         bounds_dim = 'nv'
-        assert bounds_dim not in self.ds
+        assert bounds_dim not in self.ds.coords
         assert bounds_dim in GRID_ATTRS[BOUNDS_STR]
         # Create DataArray with all dims lacking coords
         values = self.ds[self.var_name].values
@@ -101,7 +101,7 @@ class TestDataLoader(AospyDataLoaderTestCase):
 
     def test_rename_grid_attrs_skip_scalar_dim(self):
         phalf_dim = 'phalf'
-        assert phalf_dim not in self.ds
+        assert phalf_dim not in self.ds.coords
         assert phalf_dim in GRID_ATTRS[PHALF_STR]
         ds = self.ds.copy()
         ds[phalf_dim] = 4
@@ -167,9 +167,9 @@ class TestDataLoader(AospyDataLoaderTestCase):
             self.DataLoader._generate_file_set()
 
     def test_prep_time_data(self):
-        assert (TIME_WEIGHTS_STR not in self.inst_ds)
+        assert (TIME_WEIGHTS_STR not in self.inst_ds.coords)
         ds, min_year, max_year = _prep_time_data(self.inst_ds)
-        assert (TIME_WEIGHTS_STR in ds)
+        assert (TIME_WEIGHTS_STR in ds.coords)
         self.assertEqual(min_year, 2000)
         self.assertEqual(max_year, 2000)
 
@@ -182,9 +182,9 @@ class TestDataLoader(AospyDataLoaderTestCase):
             ds.attrs['a'] = 'b'
             return ds
 
-        assert LAT_STR not in self.ds
-        assert self.ALT_LAT_STR in self.ds
-        assert LON_STR in self.ds
+        assert LAT_STR not in self.ds.coords
+        assert self.ALT_LAT_STR in self.ds.coords
+        assert LON_STR in self.ds.coords
 
         expected = self.ds.rename({self.ALT_LAT_STR: LAT_STR})
         expected = expected.set_coords(TIME_BOUNDS_STR)

@@ -176,7 +176,7 @@ def _prep_time_data(ds):
     """
     ds = times.ensure_time_as_dim(ds)
     ds, min_year, max_year = times.numpy_datetime_workaround_encode_cf(ds)
-    if TIME_BOUNDS_STR in ds:
+    if TIME_BOUNDS_STR in ds.coords:
         ds = times.ensure_time_avg_has_cf_metadata(ds)
         ds[TIME_STR] = times.average_time_bounds(ds)
     else:
